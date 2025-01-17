@@ -31,16 +31,21 @@ try{
 const server = new WebSocket("ws://localhost:3210");//GRID_SOCKET_PORT
 
 server.onopen = ()=>{
-    console.log("GRID_SOCKET_CONNECTED");
-    server.send("Testing connection client");
+    server.send("connect");
 }
 
 server.onmessage = ($event:MessageEvent)=>{
-    console.log("Current Message ::: ",$event.data);
+    const data = JSON.parse($event?.data);   
+    if(data?.status==='updating'){
+        console.info("Updating Grid");  
+    }else if(data?.status==='fetching'){ 
+        setGridViewHTML(data?.html);
+    }  
 }
 
 server.onclose = ()=>{
     console.info("GRID_SOCKET_DISCONNECTED");
+    server.send("disconnect");
 }
 
 server.onerror = (error:Event)=>{
@@ -50,7 +55,7 @@ server.onerror = (error:Event)=>{
 }catch(error){
     console.error("GRID_SOCKET_INIT_ERROR",error);
 }
-}
+}   
 
 
 useEffect(()=>{
@@ -66,7 +71,7 @@ return (
     <section className={styles?.wrapper}>
         <div className={styles?.container}>
             <div className={styles?.header}>
-                <button onClick={getGridManually}>Get Grid</button>
+                <button onClick={getGrid}>Get Grid</button>
             </div>
             <div className={styles?.gridWrapper} dangerouslySetInnerHTML={{__html:gridViewHTML}}></div>
         </div>
