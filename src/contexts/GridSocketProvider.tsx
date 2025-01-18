@@ -3,6 +3,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 type MessageHandler = (data: any) => void;
 
 type GridSocketContextType = {
+  socket: WebSocket | null;
   sendMessage: (data: any) => void;
   registerHandler: (handler: MessageHandler) => void;
   unregisterHandler: () => void;
@@ -80,7 +81,7 @@ export const GridSocketProvider: React.FC<{ children:any }> = ({ children }) => 
   };
 
   return (
-    <GridSocketContext.Provider value={{ sendMessage, registerHandler, unregisterHandler,setUrl,isConnected }}>
+    <GridSocketContext.Provider value={{ socket,sendMessage, registerHandler, unregisterHandler,setUrl,isConnected }}>
       {children}
     </GridSocketContext.Provider>
   );
