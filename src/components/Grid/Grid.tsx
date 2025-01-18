@@ -2,12 +2,16 @@ import React, { Fragment, useEffect, useState } from 'react';
 import styles from './Grid.module.css';
 import { useForm } from 'react-hook-form';
 import LiveCode from './LiveCode';
+import { useGridSocket } from '../../contexts/GridSocketProvider';
+
+type MessageHandler = (data: any) => void;
 
 const Grid = () => {
     const [gridViewHTML, setGridViewHTML] = useState<string>('<div></div>');
-    const [socket, setSocket] = useState<WebSocket | null>(null);
+    const [gridViewRaw,setGridViewRaw] = useState<Array<string>>([]); 
     const [isPending,setIsPending] = useState<boolean>(false);//TODO: Handle multiple insertions
     const [isFetching,setIsFetching] = useState<boolean>(false);
+    const {isConnected,registerHandler,unregisterHandler,connect:connectGridSocket,socket} = useGridSocket();
     const {
         register,
         watch,
@@ -38,43 +42,16 @@ const Grid = () => {
 
     const getGrid = () => {
         try {
-            const server = new WebSocket("ws://localhost:3210");//GRID_SOCKET_PORT
-
-            server.onopen = () => {
-                server.send("connect");
-                setSocket(server); //Save Reference
-            }
-
-            server.onmessage = ($event: MessageEvent) => {
-                const data = JSON.parse($event?.data);
-                if (data?.status === 'updating') {
-                    setIsFetching(true);
-                } else if (data?.status === 'fetching') {
-                    setIsFetching(false);
-                    setGridViewHTML(data?.html);
-                }
-            }
-
-            server.onclose = () => {
-                console.info("GRID_SOCKET_DISCONNECTED");
-                setSocket(null);   
-                server.send("disconnect");
-            }
-
-            server.onerror = (error: Event) => {
-                console.info("GRID_SOCKET_ERROR\n", error);
-            }
-
+            connectGridSocket();   
         } catch (error) {
             console.error("GRID_SOCKET_INIT_ERROR", error);
         }
     }
-
+     
     const stopGrid = ()=>{
         try{
             socket?.send("disconnect");
             socket?.close();
-            setSocket(null);
         }catch(error:any){
             console.error("Failed to stop grid <Socket> connection\n",error);
         }
@@ -82,9 +59,21 @@ const Grid = () => {
 
 
     useEffect(() => {
+        //Configure Handler for Grid Socket Provider
+        const _gridSocketHandler = (data:any)=>{
+            if (data?.status === 'updating') {
+                setIsFetching(true);
+            } else if (data?.status === 'fetching') {
+                setIsFetching(false);
+                setGridViewHTML(data?.html);
+                setGridViewRaw(data?.raw);      
+            }
+        }
+        registerHandler(_gridSocketHandler);
         //Close connection on closure 
         return () => {
             if (socket) {
+                socket.send('disconnect');
                 socket.close();
             }
         }
@@ -113,10 +102,10 @@ const Grid = () => {
                         <span className={styles?.artwork}></span>   
                     </div>
                     <div className={styles?.gridBtnWrapper}>
-                        <button className={`${styles?.gridBtn} ${socket ? styles?.active : ''}`} onClick={socket ? stopGrid : getGrid}>{socket ? 'STOP 2D GRID' : 'GENERATE 2D GRID'}</button>  
+                        <button className={`${styles?.gridBtn} ${isConnected ? styles?.active : ''}`} onClick={isConnected ? stopGrid : getGrid}>{isConnected ? 'STOP 2D GRID' : 'GENERATE 2D GRID'}</button>  
                     </div>
                 </div>
-                {socket && <Fragment>
+                {isConnected && <Fragment>
                 <div className={styles?.notificationsWrapper}>
                 <span className={`${styles?.badgeFetching} ${isFetching ? styles?.active : ''}`}>Updating...</span>
                 </div>
@@ -126,7 +115,7 @@ const Grid = () => {
                     </div>
                 </div>
                 <LiveCode />
-                </Fragment>}   
+                </Fragment>}  
             </div>
         </section>   
     )

@@ -8,7 +8,8 @@ type GridSocketContextType = {
   registerHandler: (handler: MessageHandler) => void;
   unregisterHandler: () => void;
   isConnected: boolean;
-  setUrl: (url:string)=>void;
+  connect: ()=>void;
+  message:any;
 };
 
 const GridSocketContext = createContext<GridSocketContextType | undefined>(undefined);
@@ -17,52 +18,52 @@ export const GridSocketProvider: React.FC<{ children:any }> = ({ children }) => 
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [handler, setHandler] = useState<MessageHandler | null>(null);
-  const [url,setUrl] = useState<string>();
+  const [message,setMessage] = useState<any>({});
   
-
-  useEffect(() => {
-    if(url){
-    try{
-        const server = new WebSocket(url);
-        server.onopen = () => {
-            setIsConnected(true);
-            server.send("connect");
-          };
-      
-          server.onmessage = ($event:MessageEvent) => {
-            try {
-              const data = JSON.parse($event.data);
-              if (handler) {
-                handler(data);
-              } else {
-                console.warn("No handler registered to process the message:", data);
-              }
-            } catch (error) {
-              console.error("Failed to parse WebSocket message:", error);
-            }
-          };
-      
-          server.onclose = () => {
-            console.info("GRID_SOCKET_DISCONNECTED");
-            setIsConnected(false);
-            server.send("disconnect");
-          };
-      
-          server.onerror = (error) => {
-            console.error("GRID_SOCKET_ERROR\n", error);
-          };
-      
-          setSocket(server);
-    } catch (error) {
-        console.error("GRID_SOCKET_INIT_ERROR", error);
-    }   
-   
+  const connect = ()=>{
+    if(!isConnected){
+        try{
+            const server = new WebSocket("ws://localhost:3210");
+            server.onopen = () => {
+                setIsConnected(true);
+                server.send("connect");
+              };
+          
+              server.onmessage = ($event:MessageEvent) => {
+                try {
+                  const data = JSON.parse($event.data);
+                  if (handler) {
+                    handler(data);
+                    setMessage(data);   
+                  } else {
+                    console.warn("No handler registered to process the message:", data);
+                  }
+                } catch (error) {
+                  console.error("Failed to parse WebSocket message:", error);
+                }
+              };
+          
+              server.onclose = () => {
+                console.info("GRID_SOCKET_DISCONNECTED");
+                setIsConnected(false);  
+              };
+          
+              server.onerror = (error) => {
+                console.error("GRID_SOCKET_ERROR\n", error);
+              };
+          
+              setSocket(server);
+        } catch (error) {
+            console.error("GRID_SOCKET_INIT_ERROR", error);
+        }   
     }
+  }
+  useEffect(() => {
     //Close connection onf unmount
     return () => {
       socket && socket.close();
     };
-  }, [url]);
+  }, []);
 
   const sendMessage = (data: any) => {
     if (socket && isConnected) {
@@ -81,7 +82,7 @@ export const GridSocketProvider: React.FC<{ children:any }> = ({ children }) => 
   };
 
   return (
-    <GridSocketContext.Provider value={{ socket,sendMessage, registerHandler, unregisterHandler,setUrl,isConnected }}>
+    <GridSocketContext.Provider value={{ socket,sendMessage, registerHandler, unregisterHandler,connect,isConnected,message }}>
       {children}
     </GridSocketContext.Provider>
   );
