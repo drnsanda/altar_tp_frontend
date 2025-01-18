@@ -26,7 +26,7 @@ export const GridSocketProvider: React.FC<{ children:any }> = ({ children }) => 
             const server = new WebSocket("ws://localhost:3210");
             server.onopen = () => {
                 setIsConnected(true);
-                server.send("connect");
+                server.send(JSON.stringify({code:"connect"}));    
               };
           
               server.onmessage = ($event:MessageEvent) => {
@@ -88,7 +88,7 @@ export const GridSocketProvider: React.FC<{ children:any }> = ({ children }) => 
   );
 };
 
-export const useGridSocket = () => {
+export const useGridSocket = () => {   
   const context = useContext(GridSocketContext);
   if (!context) {
     throw new Error("useGridSocket must be used within a GridSocketProvider");

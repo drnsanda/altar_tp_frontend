@@ -53,7 +53,7 @@ const Grid = () => {
      
     const stopGrid = ()=>{
         try{
-            socket?.send("disconnect");
+            socket?.send(JSON.stringify({code:"disconnect"}));
             socket?.close();
         }catch(error:any){
             console.error("Failed to stop grid <Socket> connection\n",error);
