@@ -12,16 +12,19 @@ const Grid = () => {
     const [isPending,setIsPending] = useState<boolean>(false);//TODO: Handle multiple insertions
     const [isFetching,setIsFetching] = useState<boolean>(false);
     const {isConnected,registerHandler,unregisterHandler,connect:connectGridSocket,socket} = useGridSocket();
+    const [isBiasDisabled,setIsBiasDisabled] = useState<boolean>(false);   
     const {
         register,
         watch,
         formState: {errors},
+        resetField
     } = useForm<{ character: string }>({mode:"onChange"});  
 
     const getGridManually = () => {
+        const bias = watch();   
         return fetch('http://localhost:3200/api/users/grid', {
             method: "POST",
-            body: JSON.stringify({ bias: "h" }),
+            body: JSON.stringify({ bias: bias.character ?? "" }),
             headers: {
                 "Content-Type": "application/json"
             },
@@ -57,6 +60,21 @@ const Grid = () => {
         }
     }
 
+    const triggerGridWeight = ()=>{
+        const bias = watch();
+        if(isConnected && /^[a-zA-z]{1,1}$/.test(bias.character)){
+            socket?.send(JSON.stringify({
+                code:"bias",
+                data:bias.character
+            }));
+            setIsBiasDisabled(true);
+            setTimeout(()=>{
+                setIsBiasDisabled(false);
+                resetField("character");   
+            },4000);    
+        }
+    }
+
 
     useEffect(() => {
         //Configure Handler for Grid Socket Provider
@@ -85,7 +103,7 @@ const Grid = () => {
                 <div className={styles?.header}>
                     <div className={styles?.inputWrapper}>
                         <label>CHARACTER</label>
-                        <input {...register("character", {
+                        <input disabled={isBiasDisabled} {...register("character", {
                             pattern: {
                                 value: /^[a-zA-Z]$/,
                                 message: "Only alphabetic characters are allowed (no numbers or special characters).",
@@ -94,7 +112,7 @@ const Grid = () => {
                                 value: 1,
                                 message: "Only one character is allowed.",
                             },
-                        })} name='character' type='text' placeholder='Character' alt='input-char' />
+                        })} name='character' type='text' placeholder='Character' alt='input-char' onBlur={triggerGridWeight} />
                         <span className={`${styles?.error} ${errors?.character ? styles?.active : ''}`}>{errors?.character?.message}</span>
                         {isPending && <span className={styles?.badgePending}>Pending</span>}
                     </div>
