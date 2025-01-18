@@ -6,7 +6,7 @@ import LiveCode from './LiveCode';
 const Grid = () => {
     const [gridViewHTML, setGridViewHTML] = useState<string>('<div></div>');
     const [socket, setSocket] = useState<WebSocket | null>(null);
-    const [isPending,setIsPending] = useState<boolean>(false);
+    const [isPending,setIsPending] = useState<boolean>(false);//TODO: Handle multiple insertions
     const [isFetching,setIsFetching] = useState<boolean>(false);
     const {
         register,
