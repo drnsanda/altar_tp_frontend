@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import styles from './Grid.module.css';
 import { useForm } from 'react-hook-form';
+import LiveCode from './LiveCode';
 
 const Grid = () => {
     const [gridViewHTML, setGridViewHTML] = useState<string>('<div></div>');
@@ -47,8 +48,9 @@ const Grid = () => {
             server.onmessage = ($event: MessageEvent) => {
                 const data = JSON.parse($event?.data);
                 if (data?.status === 'updating') {
-                    console.info("Updating Grid");
+                    setIsFetching(true);
                 } else if (data?.status === 'fetching') {
+                    setIsFetching(false);
                     setGridViewHTML(data?.html);
                 }
             }
@@ -114,11 +116,17 @@ const Grid = () => {
                         <button className={`${styles?.gridBtn} ${socket ? styles?.active : ''}`} onClick={socket ? stopGrid : getGrid}>{socket ? 'STOP 2D GRID' : 'GENERATE 2D GRID'}</button>  
                     </div>
                 </div>
+                {socket && <Fragment>
+                <div className={styles?.notificationsWrapper}>
+                <span className={`${styles?.badgeFetching} ${isFetching ? styles?.active : ''}`}>Updating...</span>
+                </div>
                 <div className={styles?.gridWrapper} >
                     <div className={styles?.gridWrapperContent} dangerouslySetInnerHTML={{ __html: gridViewHTML }}>
 
                     </div>
                 </div>
+                <LiveCode />
+                </Fragment>}   
             </div>
         </section>   
     )
