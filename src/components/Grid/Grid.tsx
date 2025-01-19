@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import LiveCode from './LiveCode';
 import { useGridSocket } from '../../contexts/GridSocketProvider';
 import {useNavigate} from 'react-router';
+import {toast} from 'react-toastify';
 
 type MessageHandler = (data: any) => void;
 
@@ -86,13 +87,15 @@ const Grid = () => {
             } else if (data?.status === 'fetching_grid') {
                 setIsFetching(false);
                 setGridViewHTML(data?.html);     
+            }else if(data?.status==='close_error'){
+                toast.error(data?.message);
             }
-        }
-        _gridSocketHandler(data);   
+        }   
+        _gridSocketHandler(data);      
         //Close connection on closure 
    /*      return () => {
             if (socket) {
-                socket.send('disconnect');
+                socket.send('disconnect');  
                 socket.close();
             }
         } */

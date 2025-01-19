@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-
 type MessageHandler = (data: any) => void;
 
 type GridSocketContextType = {
@@ -23,7 +22,9 @@ export const GridSocketProvider: React.FC<{ children:any }> = ({ children }) => 
   const connect = ()=>{
     if(!isConnected){
         try{
-            const server = new WebSocket("ws://localhost:3210");
+            const searchParams = new URLSearchParams(window.location.search);
+            const token = searchParams.get("token");
+            const server = new WebSocket(`ws://localhost:3210?token=${token}`);
             server.onopen = () => {
                 setIsConnected(true);
                 server.send(JSON.stringify({code:"connect"}));    
@@ -43,8 +44,11 @@ export const GridSocketProvider: React.FC<{ children:any }> = ({ children }) => 
                 }
               };
           
-              server.onclose = () => {
+              server.onclose = ($event:CloseEvent) => {
                 console.info("GRID_SOCKET_DISCONNECTED");
+                if($event.code===4001 || $event.code===4002 || $event.code===4005){
+                  setMessage({status:"close_error",message:$event.reason,code:$event.code});
+                }
                 setIsConnected(false);  
               };
           
