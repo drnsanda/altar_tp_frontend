@@ -68,9 +68,10 @@ export const GridSocketProvider: React.FC<{ children:any }> = ({ children }) => 
     return () => {
       socket && socket.close();
     };
+    //eslint-disable-next-line
   }, []);
 
-  const sendMessage = (data: any) => {
+  const sendMessage = (data: any) => {    
     if (socket && isConnected) {
       socket.send(JSON.stringify(data));
     } else {

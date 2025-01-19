@@ -9,7 +9,6 @@ const Payments = () => {
     const { isConnected, message: data, socket } = useGridSocket();
     const [isFetching, setIsFetching] = useState<boolean>(false);
     const [paymentsHTML, setPaymentsHTML] = useState<string>("");
-    const [paymentsData, setPaymentsData] = useState<Array<any>>();
     const [liveCode, setLiveCode] = useState<string>();
     const [gridViewHTML, setGridViewHTML] = useState<string>();
     const navigate = useNavigate();
@@ -41,7 +40,6 @@ const Payments = () => {
             }
             else if (data?.status === 'fetching_payments') {
                 setPaymentsHTML(data?.html);
-                setPaymentsData(data?.raw);
             } else if (data?.status === 'payment_completed') {
                 setTimeout(() => {
                     toast.success('Payment has been received');
@@ -61,6 +59,7 @@ const Payments = () => {
         if (isConnected === false) {
             navigate("/");//Navigates to home page if socket is disconnected
         }
+        //eslint-disable-next-line
     }, [isConnected])
 
     const onSubmit = (formData: FormProps) => {

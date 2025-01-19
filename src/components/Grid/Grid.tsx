@@ -7,11 +7,9 @@ import {useNavigate} from 'react-router';
 import {toast} from 'react-toastify';
 import config from "../../config";
 
-type MessageHandler = (data: any) => void;
 
 const Grid = () => {
     const [gridViewHTML, setGridViewHTML] = useState<string>('<div></div>');
-    const [isPending,setIsPending] = useState<boolean>(false);//TODO: Handle multiple insertions
     const [isFetching,setIsFetching] = useState<boolean>(false);
     const {isConnected,message:data,connect:connectGridSocket,socket} = useGridSocket();
     const [isBiasDisabled,setIsBiasDisabled] = useState<boolean>(false);   
@@ -24,9 +22,10 @@ const Grid = () => {
         resetField
     } = useForm<{ character: string }>({mode:"onChange"});  
 
+    //eslint-disable-next-line
     const getGridManually = () => {
         const bias = watch();   
-        return fetch(`${config.baseBackendUrl}/api/users/grid`, {
+        return fetch(`${config.baseBackendUrl}/api/grids`, {
             method: "POST",
             body: JSON.stringify({ bias: bias.character ?? "" }),
             headers: {
@@ -119,7 +118,6 @@ const Grid = () => {
                             },
                         })} name='character' type='text' placeholder='Character' alt='input-char' onBlur={triggerGridWeight} />
                         <span className={`${styles?.error} ${errors?.character ? styles?.active : ''}`}>{errors?.character?.message}</span>
-                        {isPending && <span className={styles?.badgePending}>Pending</span>}
                     </div>
                     <div className={styles?.artworkWrapper}>
                         <span className={styles?.artwork}></span>   
