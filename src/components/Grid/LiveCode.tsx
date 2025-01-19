@@ -2,13 +2,18 @@ import React, { useEffect, useState } from 'react';
 import styles from './Grid.module.css';
 import { useGridSocket } from '../../contexts/GridSocketProvider';
 import {getLowestIntegerByDivision} from '../../utils';   
-const LiveCode = () => {
+
+type LiveCodeProps = {
+    setLiveCode?: (code:string)=>void
+}
+
+const LiveCode = ({setLiveCode}:LiveCodeProps) => {
     const [code, setCode] = useState<string>();
     const { message: data } = useGridSocket();
 
     useEffect(() => {
         const GRID_SIZE = 10;
-        if (data?.status === 'fetching') {
+        if (data?.status === 'fetching_grid') {
             if (Array.isArray(data?.raw)) {
                 const timeSeconds = new Date().getSeconds().toString().padStart(2, '0');
                 //console.log("Time Seconds ::: ",timeSeconds);   
@@ -26,7 +31,7 @@ const LiveCode = () => {
 
                 setCode(`${occurences[0]}${occurences[1]}`);      
                 //console.log("Code ::: ",`${letters[0]},${letters[1]}`);  
-
+                setLiveCode && setLiveCode(`${occurences[0]}${occurences[1]}`);  
             }
         }
     }, [data])     

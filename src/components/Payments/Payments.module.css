@@ -1,0 +1,89 @@
+.formWrapper{
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+}
+.inputWrapper label {
+    font-size: 12px;
+    margin-bottom: 10px;
+    display: block;
+    color: #8a9da4;
+    font-weight: bold;
+}
+
+.inputWrapper input {
+    max-width: 150px;
+    width: 100%;
+    border: 1px solid #8a9da4;
+    padding: 15px 30px;
+    display: block;
+    border-radius: 2px;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #8a9da4;
+}
+
+.inputWrapper input:focus {
+    outline: none;
+}
+
+.inputWrapper .error {
+    font-size: 10px;
+    max-width: 150px;
+    color: red;
+    display: inline-block;
+    text-align: justify;
+    height: 50px;
+    opacity: 0;
+}
+
+.inputWrapper .error.active {
+    opacity: 1;
+}
+
+.paymentsBtnWrapper {
+display: flex;
+justify-content: center;
+align-items: center;
+padding-top: 28px;
+}
+
+.paymentsBtn {
+    border: none;
+    padding: 12px 22px;
+    border-radius: 4px;
+    background-color: #8a9da4;
+    font-size: 15px;
+    font-weight: bolder;
+    color: #FFFFFF;
+    cursor: pointer;
+    transition: background-color 150ms ease-in-out;
+    min-width: 80px;
+}
+
+.paymentsBtn:hover {
+    background-color: #6a7a80;
+}
+.notificationsWrapper {
+    margin-bottom: 10px;
+}
+
+.badgeFetching {
+    padding: 4px 12px;
+    background-color: rgb(11, 176, 49);
+    color: #FFFFFF;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    display: inline-block;
+    opacity: 0;
+    transition: opacity 150ms ease-in-out;
+}
+
+.badgeFetching.active {
+    opacity: 1;
+}
+
+.paymentListWrapper{
+    margin-bottom: 80px;
+}

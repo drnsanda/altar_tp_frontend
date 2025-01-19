@@ -3,16 +3,18 @@ import styles from './Grid.module.css';
 import { useForm } from 'react-hook-form';
 import LiveCode from './LiveCode';
 import { useGridSocket } from '../../contexts/GridSocketProvider';
+import {useNavigate} from 'react-router';
 
 type MessageHandler = (data: any) => void;
 
 const Grid = () => {
     const [gridViewHTML, setGridViewHTML] = useState<string>('<div></div>');
-    const [gridViewRaw,setGridViewRaw] = useState<Array<string>>([]); 
     const [isPending,setIsPending] = useState<boolean>(false);//TODO: Handle multiple insertions
     const [isFetching,setIsFetching] = useState<boolean>(false);
-    const {isConnected,registerHandler,unregisterHandler,connect:connectGridSocket,socket} = useGridSocket();
+    const {isConnected,message:data,connect:connectGridSocket,socket} = useGridSocket();
     const [isBiasDisabled,setIsBiasDisabled] = useState<boolean>(false);   
+    const navigate = useNavigate();
+
     const {
         register,
         watch,
@@ -79,23 +81,22 @@ const Grid = () => {
     useEffect(() => {
         //Configure Handler for Grid Socket Provider
         const _gridSocketHandler = (data:any)=>{
-            if (data?.status === 'updating') {
+            if (data?.status === 'updating_grid') {
                 setIsFetching(true);
-            } else if (data?.status === 'fetching') {
+            } else if (data?.status === 'fetching_grid') {
                 setIsFetching(false);
-                setGridViewHTML(data?.html);
-                setGridViewRaw(data?.raw);      
+                setGridViewHTML(data?.html);     
             }
         }
-        registerHandler(_gridSocketHandler);
+        _gridSocketHandler(data);   
         //Close connection on closure 
-        return () => {
+   /*      return () => {
             if (socket) {
                 socket.send('disconnect');
                 socket.close();
             }
-        }
-    }, []);
+        } */
+    }, [data]);
 
     return (
         <section className={styles?.wrapper}>
@@ -133,6 +134,9 @@ const Grid = () => {
                     </div>
                 </div>
                 <LiveCode />
+                <div className={styles?.paymentsBtnWrapper}>
+                        <button className={styles?.paymentsBtn} onClick={()=>navigate("/payments")}>GO TO PAYMENTS</button>  
+                </div>
                 </Fragment>}  
             </div>
         </section>   

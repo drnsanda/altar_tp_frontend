@@ -32,11 +32,11 @@ export const GridSocketProvider: React.FC<{ children:any }> = ({ children }) => 
               server.onmessage = ($event:MessageEvent) => {
                 try {
                   const data = JSON.parse($event.data);
+                  setMessage(data); 
                   if (handler) {
                     handler(data);
-                    setMessage(data);   
                   } else {
-                    console.warn("No handler registered to process the message:", data);
+                    //console.warn("No handler registered to process the message:", data);
                   }
                 } catch (error) {
                   console.error("Failed to parse WebSocket message:", error);
