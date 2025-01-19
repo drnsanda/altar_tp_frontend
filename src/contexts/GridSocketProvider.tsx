@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
+import config from "../config";
 type MessageHandler = (data: any) => void;
 
 type GridSocketContextType = {
@@ -24,7 +25,7 @@ export const GridSocketProvider: React.FC<{ children:any }> = ({ children }) => 
         try{
             const searchParams = new URLSearchParams(window.location.search);
             const token = searchParams.get("token");
-            const server = new WebSocket(`ws://localhost:3210?token=${token}`);
+            const server = new WebSocket(`${config.baseGridSocketUrl}?token=${token}`);
             server.onopen = () => {
                 setIsConnected(true);
                 server.send(JSON.stringify({code:"connect"}));    

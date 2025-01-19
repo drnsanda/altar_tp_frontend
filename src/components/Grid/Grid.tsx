@@ -5,6 +5,7 @@ import LiveCode from './LiveCode';
 import { useGridSocket } from '../../contexts/GridSocketProvider';
 import {useNavigate} from 'react-router';
 import {toast} from 'react-toastify';
+import config from "../../config";
 
 type MessageHandler = (data: any) => void;
 
@@ -25,7 +26,7 @@ const Grid = () => {
 
     const getGridManually = () => {
         const bias = watch();   
-        return fetch('http://localhost:3200/api/users/grid', {
+        return fetch(`${config.baseBackendUrl}/api/users/grid`, {
             method: "POST",
             body: JSON.stringify({ bias: bias.character ?? "" }),
             headers: {

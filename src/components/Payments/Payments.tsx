@@ -4,7 +4,7 @@ import LiveCode from '../Grid/LiveCode';
 import { useForm } from 'react-hook-form';
 import { useGridSocket } from '../../contexts/GridSocketProvider';
 import { useNavigate } from 'react-router';
-import {toast} from 'react-toastify';
+import { toast } from 'react-toastify';
 const Payments = () => {
     const { isConnected, message: data, socket } = useGridSocket();
     const [isFetching, setIsFetching] = useState<boolean>(false);
@@ -31,27 +31,27 @@ const Payments = () => {
         const _gridSocketHandler = (data: any) => {
             if (data?.status === 'updating_payments') {
                 setIsFetching(true);
-                setTimeout(()=>{
-                    setIsFetching(false);    
-                },2000)
+                setTimeout(() => {
+                    setIsFetching(false);
+                }, 2000)
             }
             else if (data?.status === 'fetching_grid') {
                 setIsFetching(false);
                 setGridViewHTML(data?.html);
             }
-            else if (data?.status === 'fetching_payments') {   
+            else if (data?.status === 'fetching_payments') {
                 setPaymentsHTML(data?.html);
                 setPaymentsData(data?.raw);
-            }else if(data?.status === 'payment_completed'){
-                setTimeout(()=>{
-                    toast.success('Payment has been received' );
-                },500);    
-               
+            } else if (data?.status === 'payment_completed') {
+                setTimeout(() => {
+                    toast.success('Payment has been received');
+                }, 500);
+
             }
-            else if(data?.status === 'payment_failed'){
-                setTimeout(()=>{
-                    toast.error('Failed to process your payment' );
-                },1500);
+            else if (data?.status === 'payment_failed') {
+                setTimeout(() => {
+                    toast.error('Failed to process your payment');
+                }, 1500);
             }
         }
         _gridSocketHandler(data);
@@ -68,8 +68,8 @@ const Payments = () => {
             socket?.send(JSON.stringify({ code: "execute_payment", data: { ...formData, code: liveCode, grid: gridViewHTML } }));
             reset();
         }
-    } 
-    
+    }
+
     return <>
         <div className={styles?.wrapper}>
             <div className="container">
@@ -88,7 +88,11 @@ const Payments = () => {
                         <div className={styles?.inputWrapper}>
                             <label>AMOUNT</label>
                             <input type="number" {...register("amount", {
-                                required: "Please insert payment amount."
+                                required: "Please insert payment amount.",
+                                min: {
+                                    value: 1,
+                                    message: "Amount must be at least 1."
+                                }
                             })} name='amount' placeholder='Amount' alt='payment-amount' />
                             <span className={`${styles?.error} ${errors?.amount ? styles?.active : ''}`}>{errors?.amount?.message}</span>
                         </div>
@@ -99,7 +103,7 @@ const Payments = () => {
                     </form>
                 </div>
                 <div className={styles?.notificationsWrapper}>
-                <span className={`${styles?.badgeFetching} ${isFetching ? styles?.active : ''}`}>Payment in progress...</span>
+                    <span className={`${styles?.badgeFetching} ${isFetching ? styles?.active : ''}`}>Payment in progress...</span>
                 </div>
                 <div className={styles?.paymentListWrapper}>
                     <div className={styles?.gridWrapperContent} dangerouslySetInnerHTML={{ __html: paymentsHTML }}>
@@ -107,7 +111,7 @@ const Payments = () => {
                     </div>
                 </div>
                 <div className={styles?.goBackBtnWrapper}>
-                    <button onClick={()=>navigate(-1)} className={styles?.goBackBtn} >GO BACK</button>
+                    <button onClick={() => navigate(-1)} className={styles?.goBackBtn} >GO BACK</button>
                 </div>
             </div>
 
