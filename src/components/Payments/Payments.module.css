@@ -32,7 +32,7 @@
     max-width: 150px;
     color: red;
     display: inline-block;
-    text-align: justify;
+    text-align: left;
     height: 50px;
     opacity: 0;
 }
@@ -86,4 +86,40 @@ padding-top: 28px;
 
 .paymentListWrapper{
     margin-bottom: 80px;
+}
+
+.goBackBtnWrapper {
+    min-height: 130px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.goBackBtn {
+    border: none;
+    padding: 12px 22px;
+    border-radius: 4px;
+    background-color: #8a9da4;
+    font-size: 15px;
+    font-weight: bolder;
+    color: #FFFFFF;
+    cursor: pointer;
+    transition: background-color 150ms ease-in-out;
+    min-width: 191.25px;
+}
+
+.goBackBtn:hover {
+    background-color: #6a7a80;
+}
+
+@media only screen and (max-width:1024px) {
+    table thead th:not(:first-child){
+        width: 20% !important;
+    }
+    table thead th:first-child{
+        width: 40% !important;
+    }
+    .paymentsBtn{
+        width: 100px;
+    }
 }

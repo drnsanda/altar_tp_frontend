@@ -218,3 +218,35 @@
 .paymentsBtn:hover {
     background-color: #6a7a80;
 }
+
+@media only screen and (max-width:1180px) {
+    .gridWrapperContent > div{
+        
+    }
+    .gridWrapperContent > div > span{
+        padding: calc(17vw * 0.2) !important;
+        height: 15px !important;
+        width: 15px !important;
+    }
+    .header{
+        justify-content: space-around;   
+        display: flex;
+        flex-direction: column-reverse;
+        padding-bottom: 0px;
+    }
+    .artworkWrapper{
+        min-height: unset;
+        display: block;
+        margin-bottom: 15px;
+    }
+    .gridBtnWrapper{
+        min-height: unset;
+        display: block;
+        margin-bottom: 15px;
+    }
+    .gridBtn{
+        font-size: 12px;
+        min-width: 80px;
+    }
+
+}

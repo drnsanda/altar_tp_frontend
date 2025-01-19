@@ -4,7 +4,7 @@ import LiveCode from '../Grid/LiveCode';
 import { useForm } from 'react-hook-form';
 import { useGridSocket } from '../../contexts/GridSocketProvider';
 import { useNavigate } from 'react-router';
-
+import {toast} from 'react-toastify';
 const Payments = () => {
     const { isConnected, message: data, socket } = useGridSocket();
     const [isFetching, setIsFetching] = useState<boolean>(false);
@@ -13,6 +13,7 @@ const Payments = () => {
     const [liveCode, setLiveCode] = useState<string>();
     const [gridViewHTML, setGridViewHTML] = useState<string>();
     const navigate = useNavigate();
+
 
     type FormProps = {
         name: string;
@@ -41,6 +42,16 @@ const Payments = () => {
             else if (data?.status === 'fetching_payments') {   
                 setPaymentsHTML(data?.html);
                 setPaymentsData(data?.raw);
+            }else if(data?.status === 'payment_completed'){
+                setTimeout(()=>{
+                    toast.success('Payment has been received' );
+                },500);    
+               
+            }
+            else if(data?.status === 'payment_failed'){
+                setTimeout(()=>{
+                    toast.error('Failed to process your payment' );
+                },1500);
             }
         }
         _gridSocketHandler(data);
@@ -57,7 +68,8 @@ const Payments = () => {
             socket?.send(JSON.stringify({ code: "execute_payment", data: { ...formData, code: liveCode, grid: gridViewHTML } }));
             reset();
         }
-    }   
+    } 
+    
     return <>
         <div className={styles?.wrapper}>
             <div className="container">
@@ -93,6 +105,9 @@ const Payments = () => {
                     <div className={styles?.gridWrapperContent} dangerouslySetInnerHTML={{ __html: paymentsHTML }}>
 
                     </div>
+                </div>
+                <div className={styles?.goBackBtnWrapper}>
+                    <button onClick={()=>navigate(-1)} className={styles?.goBackBtn} >GO BACK</button>
                 </div>
             </div>
 
