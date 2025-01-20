@@ -1,46 +1,85 @@
-# Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Altar.IO Senior Fullstack Node.js/Typescript Technical Task
 
-## Available Scripts
+This project is a technical task assignment from Altar.IO for a Senior Fullstack Position (Node.js/Typescript). The objective is to create a grid that will be connected to a WebSocket. The socket will update users with the latest codes and payments made by anyone connected to the socket. API endpoints were created to assist in developing and managing states.
 
-In the project directory, you can run:
+---
 
-### `npm start`
+## Requirements
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- **Node Version**: 22
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+---
 
-### `npm test`
+## Instructions
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Development
 
-### `npm run build`
+1. **Install Dependencies**
+   - To get started, clone the repository and install the necessary dependencies:
+     ```bash
+     yarn install
+     # or if you're using npm
+     npm install
+     ```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+2. **Create a `.env` File**
+   - Create a `.env` file at the root of the project.
+   - Update the following keys in the `.env` file:
+     - **OBS**: (Ensure that you understand that the secret key has been hashed and saved in mock users for testing purposes only. Changing the secret key will likely cause errors during authentication.)
+     ```bash
+     REACT_APP_BASE_BACKEND_URL="http://<your-backend-url>"
+     REACT_APP_BASE_GRID_SOCKET_URL="ws://<your-websocket-url>"
+     REACT_APP_ENV=<staging | production>  
+     ```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+3. **Start the Application**
+   - You can run the app locally using either of the following commands:
+     ```bash
+     yarn start
+     # or if you're using npm
+     npm run start
+     ```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+4. **You're All Set!**
+   - Your application should now be running locally.
 
-### `npm run eject`
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+### Authentication
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+1. **Login**
+ - After you have started your application, authenticate to a mock user (Testing Purposes Only)
+    ```bash
+    curl -X POST https://your-api-url.com/api/users/auth \
+    -H "Content-Type: application/json" \
+    -d '{
+            "username": "admin@altar.io",
+            "password": "altar2025"
+        }'
+    ```
+- A tokenId will be provided to you if successfull.
+![Screenshot 2](screenshots/screenshot-postman.png)
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+- Provide that tokenId to the url like here below:
+![Screenshot 3](screenshots/screenshot-token-url.png)
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+- After this step you will be able to see the grid and payments list live and interact with the two features independently or together.
+![Screenshot 4](screenshots/screenshot-grid.png)
+![Screenshot 5](screenshots/screenshot-payments.png)
 
-## Learn More
+## Stage Production
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+For deployment to production, follow these steps:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+1. **Create a Pull Request**
+   - Create a pull request to the `main` branch. Any changes to this branch will automatically trigger a GitHub Action that deploys the application to **Netlify**.
+
+2. **Testing Before Deployment**
+   - Make sure to thoroughly test your changes locally before pushing them to the `main` branch.
+
+3. **Links**
+    - Frontend: https://monumental-quokka-0c0ce2.netlify.app/
+    - Backend: https://altario-tp-backend-37a40fc15483.herokuapp.com/
+
+---
+
