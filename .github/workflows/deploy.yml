@@ -21,10 +21,6 @@ jobs:
       - name: Install Netlify CLI
         run: npm install -g netlify-cli
 
-      # Build Application
-      - name: Build Application
-        run: netlify build
-
       # Deploy to Netlify
       - name: Deploy to Netlify
         run: netlify deploy --prod --dir=build --auth=$NETLIFY_AUTH_TOKEN --site=$NETLIFY_SITE_ID
