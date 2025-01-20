@@ -23,7 +23,7 @@ jobs:
 
       # Build Application
       - name: Build Application
-        run: npm build
+        run: netlify build
 
       # Deploy to Netlify
       - name: Deploy to Netlify
