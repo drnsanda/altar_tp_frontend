@@ -34,6 +34,7 @@ const LiveCode = ({setLiveCode}:LiveCodeProps) => {
                 setLiveCode && setLiveCode(`${occurences[0]}${occurences[1]}`);  
             }
         }
+        //eslint-disable-next-line
     }, [data])     
     return <>
         <div className={styles?.liveCodeWrapper}>
